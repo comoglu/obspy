@@ -684,7 +684,8 @@ class TauPyModel(object):
                         model=self.model)
 
     def get_pierce_points(self, source_depth_in_km, distance_in_degree,
-                          phase_list=("ttall",), receiver_depth_in_km=0.0):
+                          phase_list=("ttall",), receiver_depth_in_km=0.0,
+                          add_depth=[]):
         """
         Return pierce points of every given phase.
 
@@ -698,6 +699,9 @@ class TauPyModel(object):
         :type phase_list: list[str]
         :param receiver_depth_in_km: Receiver depth in km
         :type receiver_depth_in_km: float
+        :param add_depth: List of additional depths for which to get pierce
+            points.
+        :type add_depth: list[float]
 
         :return: List of ``Arrival`` objects, each of which has the time,
             corresponding phase name, ray parameter, takeoff angle, etc. as
@@ -705,7 +709,8 @@ class TauPyModel(object):
         :rtype: :class:`Arrivals`
         """
         pp = TauPPierce(self.model, phase_list, source_depth_in_km,
-                        distance_in_degree, receiver_depth_in_km)
+                        distance_in_degree, receiver_depth_in_km,
+                        add_depth)
         pp.run()
         return Arrivals(sorted(pp.arrivals, key=lambda x: x.time),
                         model=self.model)
@@ -787,7 +792,7 @@ class TauPyModel(object):
                               receiver_latitude_in_deg,
                               receiver_longitude_in_deg,
                               phase_list=("ttall",),
-                              resample=False):
+                              resample=False, add_depth=[]):
         """
         Return pierce points of every given phase with geographical info.
 
@@ -818,6 +823,10 @@ class TauPyModel(object):
                          interpolation. This is especially useful for phases
                          like Pdiff.
         :type resample: bool
+        :param add_depth: List of additional depths for which to get pierce
+            points.
+        :type add_depth: list[float]
+        
         :return: List of ``Arrival`` objects, each of which has the time,
             corresponding phase name, ray parameter, takeoff angle, etc. as
             attributes.
@@ -831,7 +840,7 @@ class TauPyModel(object):
                                     self.planet_flattening)
 
         arrivals = self.get_pierce_points(source_depth_in_km, distance_in_deg,
-                                          phase_list)
+                                          phase_list, add_depth=add_depth)
 
         if geodetics.HAS_GEOGRAPHICLIB:
             arrivals = add_geo_to_arrivals(arrivals, source_latitude_in_deg,
