@@ -36,7 +36,9 @@ _ACTIONS = Enum([
     "transup",
     # Used by add_to_branch when the path transmits down through the end of a
     # segment.
-    "transdown"
+    "transdown",
+    # Used by add_to_branch when the path diffracts
+    "diffract"
 ])
 
 
@@ -513,7 +515,7 @@ class SeismicPhase(object):
                             tau_model.cmb_branch - 1,
                             is_p_wave).min_turn_ray_param >=
                             self.min_ray_param):
-                        end_action = _ACTIONS["turn"]
+                        end_action = _ACTIONS["diffract"]
                         self.add_to_branch(tau_model, self.current_branch,
                                            tau_model.cmb_branch - 1, is_p_wave,
                                            end_action)
@@ -798,6 +800,13 @@ class SeismicPhase(object):
             self.max_ray_param = min(
                 self.max_ray_param,
                 tau_model.get_tau_branch(end_branch, is_p_wave).min_ray_param)
+        elif end_action == _ACTIONS["diffract"]:
+            end_offset = 0
+            is_down_going = True
+            self.min_ray_param = max(
+                self.min_ray_param,
+                tau_model.get_tau_branch(end_branch,
+                                         is_p_wave).min_turn_ray_param)
         else:
             raise TauModelError("Illegal end_action: {}".format(end_action))
 
