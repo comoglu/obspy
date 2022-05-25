@@ -17,6 +17,8 @@ Changes:
      (see #3068)
    * add support for models without a core or inner core
      (see #1200, #1423, #2086, #2192, #2390, #3070)
+   * bug fix for rays which cannot turn due to low velocity at bottom
+     of layer (see #3080)
 
 maintenance_1.3.x
 =================
