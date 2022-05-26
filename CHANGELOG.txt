@@ -17,6 +17,8 @@ Changes:
      (see #3068)
    * add support for models without a core or inner core
      (see #1200, #1423, #2086, #2192, #2390, #3070)
+   * add some checks for bad phases, so "ScScS" is not allowed
+     (see #2774, #3082) 
 
 maintenance_1.3.x
 =================
