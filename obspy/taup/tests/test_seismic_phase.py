@@ -13,7 +13,7 @@ from obspy.taup import TauPyModel
 from obspy.taup.tau_model import TauModel
 from obspy.taup.seismic_phase import SeismicPhase
 from obspy.taup.taup_create import build_taup_model
-
+from obspy.taup.helper_classes import TauModelError
 
 # Most generic way to get the data folder path.
 DATA = os.path.join(os.path.dirname(os.path.abspath(
@@ -78,3 +78,17 @@ class TestTauPySeismicPhase:
             m = TauPyModel(os.path.join(folder, model_name + ".npz"))
         arr = m.get_ray_paths(172.8000, 46.762440693494824, ["SS"])
         assert len(arr) > 10
+
+    def test_phase_names(self, tau_model):
+        """
+        Simple check to see if illegal phase names are caught.
+        """
+        legal_phase_names = ["ScS", "ScSScS"]
+        illegal_phase_names = ["ScScS"]
+
+        for name in legal_phase_names:
+            SeismicPhase(name, tau_model)
+
+        for name in illegal_phase_names:
+            with pytest.raises(TauModelError):
+                SeismicPhase(name, tau_model)
